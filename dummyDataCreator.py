@@ -36,7 +36,7 @@ tradingHolidays = [
     "2025-09-01",
     "2025-11-27",
     "2025-12-25",
-  ]
+]
 
 tradingHolidaysDates = [
     datetime.strptime(date_str, '%Y-%m-%d') for date_str in tradingHolidays
@@ -50,12 +50,12 @@ def get_previous_weekdays(num_days):
     end_time = datetime.strptime("16:00", "%H:%M").time()
 
     while len(weekdays) < num_days:
-        current_time -= timedelta(days = 1)
+        current_time -= timedelta(days=1)
         if current_time.weekday() < 5:  # Monday to Friday (0 to 4)
             exec_date = current_time.date()
             # Check if the exec_time falls on a trading holiday
             if exec_date in tradingHolidaysDates:
-                continue # if the date falls within a holiday then it skips the append 
+                continue  # if the date falls within a holiday then it skips the append
 
             exec_time = datetime.combine(exec_date, start_time)
             # exec_time = exec_time + timedelta(minutes = random.randint(0, 420))
@@ -69,9 +69,10 @@ def get_previous_weekdays(num_days):
 
 
 def generate_dummy_data(num_rows):
-    headers = ['Exec Time', 'Spread', 'Side', 'Qty', 'Pos Effect', 'Symbol', 'Exp', 'Strike', 'Type', 'Price', 'Net Price', 'Order Type']
+    headers = ['Exec Time', 'Spread', 'Side', 'Qty', 'Pos Effect',
+               'Symbol', 'Exp', 'Strike', 'Type', 'Price', 'Net Price', 'Order Type']
     data = []
-    
+
     # Set some stuff up for exec_time to be within trading hours, based on 9-4 ET
     previous_weekdays = get_previous_weekdays(5)
     start_time = datetime.strptime("09:00", "%H:%M").time()
@@ -81,9 +82,11 @@ def generate_dummy_data(num_rows):
         # Enhanced exec_time data
         exec_date = random.choice(previous_weekdays).date()
         # Make the exec time a random time between 9a and 4p (7hr = 420 min)
-        exec_time = datetime.combine(exec_date, start_time) + timedelta(minutes = random.randint(0, 420))
+        exec_time = datetime.combine(
+            exec_date, start_time) + timedelta(minutes=random.randint(0, 420))
         # Format exec time
-        exec_time = timezone('US/Eastern').localize(exec_time).strftime('%m/%d/%y %H:%M:%S')
+        exec_time = timezone(
+            'US/Eastern').localize(exec_time).strftime('%m/%d/%y %H:%M:%S')
 
         spread = 'STOCK'
         a = random.randint(-1000, -100)
@@ -92,7 +95,7 @@ def generate_dummy_data(num_rows):
         d = random.randint(11, 100)
         e = random.randint(101, 1000)
         qty = random.choices([a, b, c, d, e], weights=[1, 5, 40, 5, 1])[0]
-        
+
         # Side formula
         if qty < 0:
             side = 'SELL'
@@ -101,11 +104,16 @@ def generate_dummy_data(num_rows):
 
         # Determine likelihood of pos_effect based on status of side
         if side == 'BUY':
-            pos_effect = random.choices(['TO OPEN', 'TO CLOSE'], weights = [8, 2])[0] # 80% to 20% are the weights from the example brokerage schema
+            # 80% to 20% are the weights from the example brokerage schema
+            pos_effect = random.choices(
+                ['TO OPEN', 'TO CLOSE'], weights=[8, 2])[0]
         else:
-            pos_effect = random.choices(['TO OPEN', 'TO CLOSE'], weights = [8, 92])[0] # 92% to 8% are the weights from the example brokerage schema
-        
-        symbol = random.choice(['SPY', 'SOUN', 'DD', 'TSLA', 'CMMB', 'AUPH', 'SLB', 'ATNF'])
+            # 92% to 8% are the weights from the example brokerage schema
+            pos_effect = random.choices(
+                ['TO OPEN', 'TO CLOSE'], weights=[8, 92])[0]
+
+        symbol = random.choice(
+            ['SPY', 'SOUN', 'DD', 'TSLA', 'CMMB', 'AUPH', 'SLB', 'ATNF'])
         exp = ''
         strike = ''
         if symbol == 'SPY':
@@ -113,24 +121,32 @@ def generate_dummy_data(num_rows):
         else:
             type_ = 'STOCK'
 
-        # Make price more probable to be a lower number   
+        # Make price more probable to be a lower number
         p1 = round(random.uniform(1.0, 10.0), 4)
         p2 = round(random.uniform(11.0, 100.0), 4)
         p3 = round(random.uniform(101.0, 400.0), 4)
-        price = round(random.choices([p1, p2, p3], weights = [15, 4, 1])[0], 4) #randomly picked weights, but want it to seem more realistic 
-        
-        net_price = price * 0.999999882686286 # this is the ratio in the example data :) 
-        
+        # randomly picked weights, but want it to seem more realistic
+        price = round(random.choices([p1, p2, p3], weights=[15, 4, 1])[0], 4)
+
+        # this is the ratio in the example data :)
+        net_price = price * 0.999999882686286
+
         # Make order_type realistically weighted based on pos_effect
         if pos_effect == 'TO OPEN':
-            order_type = random.choices(['LMT', 'MKT', 'STP'], weights = [5, 95, 0]) # based on actual % mix from example data
+            # based on actual % mix from example data
+            order_type = random.choices(
+                ['LMT', 'MKT', 'STP'], weights=[5, 95, 0])
         else:
-            order_type = random.choices(['LMT', 'MKT', 'STP'], weights = [2, 82, 16]) # based on actual % mix from example data
+            # based on actual % mix from example data
+            order_type = random.choices(
+                ['LMT', 'MKT', 'STP'], weights=[2, 82, 16])
 
-        row = [exec_time, spread, side, qty, pos_effect, symbol, exp, strike, type_, price, net_price, order_type]
+        row = [exec_time, spread, side, qty, pos_effect, symbol,
+               exp, strike, type_, price, net_price, order_type]
         data.append(row)
 
     return headers, data
+
 
 def write_to_csv(filename, headers, data):
     with open(filename, 'w', newline='') as file:
@@ -138,6 +154,7 @@ def write_to_csv(filename, headers, data):
         writer.writerow(['Account Trade History'] + [''] * (len(headers) - 1))
         writer.writerow([''] + headers)
         writer.writerows([[''] + row for row in data])
+
 
 # Generate 100 rows of dummy data and write to a CSV file
 headers, data = generate_dummy_data(100)
@@ -148,4 +165,4 @@ write_to_csv('dummydata03.csv', headers, data)
 # side = random.choice(['BUY', 'SELL']) # Roughly a 50/50 split based on example data
 # qty = random.randint(-10, 10)
 # pos_effect = random.choice(['TO OPEN', 'TO CLOSE'])
-# order_type = random.choice(['LMT', 'MKT', 'STP']) <-- original formula 
+# order_type = random.choice(['LMT', 'MKT', 'STP']) <-- original formula
