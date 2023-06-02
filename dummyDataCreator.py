@@ -158,7 +158,7 @@ def write_to_csv(filename, headers, data):
 
 # Generate 100 rows of dummy data and write to a CSV file
 headers, data = generate_dummy_data(100)
-write_to_csv('dummydata03.csv', headers, data)
+write_to_csv('dummydata04.csv', headers, data)
 
 # Original formulas, before modifying to make more believable
 # exec_time = get_previous_weekday(datetime.now()).strftime('%m/%d/%y %H:%M:%S')
