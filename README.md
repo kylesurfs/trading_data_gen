@@ -5,13 +5,19 @@ This is a random data generator for trading. The preferred site to use the outpu
 
 To run this program, you need to have Python 3 installed on your machine. You can visit [Python's official website](https://www.python.org/downloads/) to download and install the latest version.
 
+You also need to install the dependencies for this project. You can install the dependencies by running the following command in your terminal:
+
+```
+pip install -r requirements.txt
+```
+
 ## Usage
 
 To start the program, follow these steps:
 
-1 Open the terminal on your machine.
-2 Navigate to the directory where your Python script is located using the cd command cd /path/trading_data_gen.
-3 Once you are in the correct directory, type python followed by the name of your script and press enter. It should look like this:
+1) Open the terminal on your machine.
+2) Navigate to the directory where your Python script is located using the cd command cd /path/trading_data_gen.
+3) Once you are in the correct directory, type python followed by the name of your script and press enter. It should look like this:
 
 ```
 python dummyDataCreator.py
